@@ -1,0 +1,31 @@
+name: Release to nuget.org
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+        
+    - name: Restore dependencies
+      run: dotnet restore src
+      
+    - name: Build
+      run: dotnet build src --no-restore /p:Version=${{github.event.release.name}}
+      
+    - name: Test
+      run: dotnet test src --no-build --verbosity normal
+
+    - name: Package 
+      run: dotnet pack src/NovoNordisk.OpenTelemetry.Exporter.Bifrost -c Release /p:ContinuousIntegrationBuild=true /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:PackageVersion=${{github.event.release.name}} -o $GITHUB_WORKSPACE/release
+
+    - name: Publish
+      run: dotnet nuget push $GITHUB_WORKSPACE/release/NovoNordisk.OpenTelemetry.Exporter.Bifrost.${{github.event.release.name}}.nupkg -k ${{ secrets.NUGET_ORG_API_KEY }} --skip-duplicate -s https://api.nuget.org/v3/index.json
