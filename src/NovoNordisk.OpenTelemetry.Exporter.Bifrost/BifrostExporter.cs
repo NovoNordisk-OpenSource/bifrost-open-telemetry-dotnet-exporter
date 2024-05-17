@@ -8,6 +8,9 @@ using OpenTelemetry.Trace;
 
 namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
 
+/// <summary>
+/// Extensions for instrumenting Bifrost exporters in Open Telemetry.
+/// </summary>
 public static class BifrostExporter
 {
     /// <summary>
@@ -82,7 +85,6 @@ public static class BifrostExporter
     /// <param name="meterProviderBuilder"><see cref="MeterProviderBuilder"/> builder to use.</param>
     /// <param name="bifrostOptions">Required options for exporting to Bifrost <see cref="BifrostExporterOptions"/>.</param>
     /// <returns>The instance of <see cref="MeterProviderBuilder"/> to chain the calls.</returns>
-
     public static MeterProviderBuilder AddBifrostExporter(
         this MeterProviderBuilder meterProviderBuilder,
         BifrostOptions bifrostOptions)
