@@ -25,6 +25,7 @@ builder.Logging.AddOpenTelemetry(options =>
 ```
 
 The `BifrostOptions` can also be used in case you want to use the same configuration for both logs, traces and metrics.
+
 ```csharp
 var bifrostOptions = new BifrostOptions
 {
