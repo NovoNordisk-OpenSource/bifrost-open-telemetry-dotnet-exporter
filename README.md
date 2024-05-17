@@ -1,4 +1,4 @@
-# Digital Checklist Bifrost Exporter
+# Novo Nordisk C# Bifrost Exporter
 The content of this library is a set of OpenTelemetry instrumentation extensions for exporting telemetry to Bifrost.
 This library is intended to be used in conjunction with the OpenTelemetry SDK and exporter libraries.
 
