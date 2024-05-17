@@ -1,10 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+		<Title>Open Telemetry Bifrost Exporter</Title>
+		<Company>Novo Nordisk A/S</Company>
+        <Description>A set of OpenTelemetry instrumentation extensions for exporting telemetry to Bifrost</Description>
+        <Authors>Novo Nordisk Digital Foundation</Authors>
+        <RepositoryUrl>https://github.com/NovoNordisk-OpenSource/bifrost-open-telemetry-dotnet-exporter</RepositoryUrl>
+	    <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/NovoNordisk-OpenSource/bifrost-open-telemetry-dotnet-exporter</PackageProjectUrl>
+	    <PackageId>NovoNordisk.OpenTelemetry.Exporter.Bifrost</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReleaseNotes>https://github.com/NovoNordisk-OpenSource/bifrost-open-telemetry-dotnet-exporter/releases</PackageReleaseNotes>
+        <PackageTags>utility</PackageTags>
+		<PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+		<Copyright>Novo Nordisk A/S</Copyright>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <LangVersion>12</LangVersion>
     </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <DocumentationFile>bin\Release\NovoNordisk.OpenTelemetry.Exporter.Bifrost.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\CHANGELOG.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Identity.Web" Version="2.18.1" />
