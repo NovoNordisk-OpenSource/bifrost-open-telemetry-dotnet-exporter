@@ -11,7 +11,7 @@ namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
 /// <summary>
 /// Extensions for instrumenting Bifrost exporters in Open Telemetry.
 /// </summary>
-public static class BifrostExporter
+public static class BifrostExporterExtensions
 {
     /// <summary>
     /// Adds a Bifrost exporter the OpenTelemetry log exporter <see cref="ILoggerProvider"/>.

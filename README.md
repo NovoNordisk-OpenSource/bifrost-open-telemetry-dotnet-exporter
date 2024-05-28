@@ -4,7 +4,53 @@ This library is intended to be used in conjunction with the OpenTelemetry SDK an
 
 It is based on https://github.com/NovoNordisk-OpenSource/heimdall-templates-dotnet-microservice/blob/main/src/Heimdall.Templates.Dotnet.Microservice.Infrastructure/OpenTelemetry
 
-# Example
+# Examples
+Bifrost can be instrumented in two ways. Either by using the Builder Extensions or by using the Exporter Extensions
+## Open Telemetry Builder
+Using the Open Telemetry Builder extension is the simplest solution but also the least flexible. It is recommended to use the Exporter Extensions if you need more control over the configuration.
+
+By using the telemetry builder you'll get
+- `AspNetCore`, `HttpClient` and `"Azure.*"` traces auto instrumentation.
+- `HttpClient` metrics auto instrumentation.
+- `IncludeScopes` and `IncludeFormattedMessage` logs. 
+
+You acn also add your own activity sources and meters.
+
+```csharp
+var bifrostOptions = new BifrostOptions
+{
+    bifrostEndpoint: "https://your.bifrost.endpoint/otlp/http/v1",
+    bifrostEnvironmentId: "d9a8719a-8bc2-4829-a078-231df13fd125",
+    identityOptions: new MicrosoftIdentityOptions
+        {
+            Instance = "https://login.microsoftonline.com/",
+            ClientId = "8be5cb8b-3a8d-47bf-9b70-660963b311ef",
+            ClientSecret = "ThisIsYourClientSecret",
+            TenantId = "c39886aa-7273-4937-9cad-53b86940713f")
+        });    
+};
+        
+builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
+```
+
+It is recommended to turn on `EnableActivitySource` in the AppContext. This is needed to get the correct ActivitySource for the OpenTelemetry SDK when using Azure and custom traces. Hopefully this is not needed in future versions of Open Telemetry. 
+```csharp
+AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
+```
+
+It is also recommended to configure a Telemetry Resource. Here's an example for the `OpenTelemetryBuilder`:
+```csharp
+          .ConfigureResource(resourceBuilder => resourceBuilder
+                .AddService("MyServiceName", "MyServiceNamespace")
+          )
+```
+Hint: You can also add attributes, like environment, to the resource.
+
+
+## Open Telemetry Exporters
+By using the Open Telemetry Exportr extensions you have more control over the configuration. Fx what auto instrumentation should be used.
+
+```csharp 
 ## Log Exporter
 Here is an example with a dummy configuration that will export open telemetry logs to Bifrost using a service principal.
 
@@ -78,4 +124,6 @@ To build and publish the nuget package manually, do the following:
 
 # TODO
 - We could probably use BifrostOptions in the private methods of BifrostExporter and make the arguments simpler.
+- Maybe we could use the config or environment variables in the `OpenTelemetryBuilderExtensions` so the user does not 
+have to pass `BifrostOptions` as an argument.
 - Add tests
