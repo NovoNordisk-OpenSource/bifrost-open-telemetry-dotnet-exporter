@@ -14,7 +14,7 @@ By using the telemetry builder you'll get
 - `HttpClient` metrics auto instrumentation.
 - `IncludeScopes` and `IncludeFormattedMessage` logs. 
 
-You acn also add your own activity sources and meters.
+You can also add your own activity sources and meters.
 
 ```csharp
 var bifrostOptions = new BifrostOptions
@@ -40,9 +40,9 @@ AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
 
 It is also recommended to configure a Telemetry Resource. Here's an example for the `OpenTelemetryBuilder`:
 ```csharp
-          .ConfigureResource(resourceBuilder => resourceBuilder
-                .AddService("MyServiceName", "MyServiceNamespace")
-          )
+.ConfigureResource(resourceBuilder => resourceBuilder
+      .AddService("MyServiceName", "MyServiceNamespace")
+)
 ```
 Hint: You can also add attributes, like environment, to the resource.
 
