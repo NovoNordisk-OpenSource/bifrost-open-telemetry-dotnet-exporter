@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Open Telemetry Builder extension.
-- 
+  
 ### Changed
 - Renamed `BifrostExporter` to `BifrostExporterExtensions` to match the naming of `OpenTelemetryBuilderExtensions`
+- Bump Microsoft.Identity.Web from 2.18.1 to 2.18.2
 
 ## [0.0.1]
 ### Changed
