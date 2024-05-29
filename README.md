@@ -19,15 +19,15 @@ You can also add your own activity sources and meters.
 ```csharp
 var bifrostOptions = new BifrostOptions
 {
-    bifrostEndpoint: "https://your.bifrost.endpoint/otlp/http/v1",
-    bifrostEnvironmentId: "d9a8719a-8bc2-4829-a078-231df13fd125",
-    identityOptions: new MicrosoftIdentityOptions
+    Endpoint = "https://your.bifrost.endpoint/otlp/http/v1",
+    BifrostEnvironmentId = "d9a8719a-8bc2-4829-a078-231df13fd125",
+    IdentityOptions = new MicrosoftIdentityOptions
         {
             Instance = "https://login.microsoftonline.com/",
             ClientId = "8be5cb8b-3a8d-47bf-9b70-660963b311ef",
             ClientSecret = "ThisIsYourClientSecret",
-            TenantId = "c39886aa-7273-4937-9cad-53b86940713f")
-        });    
+            TenantId = "c39886aa-7273-4937-9cad-53b86940713f"
+        }    
 };
         
 builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
