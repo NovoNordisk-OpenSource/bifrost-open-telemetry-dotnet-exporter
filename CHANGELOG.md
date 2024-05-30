@@ -7,8 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.3]
 ### Changed
-- Added `GrpClient` tracing to Open Telemetry Builder extension.
-- Added `AspNetCore`, `Runtime` and `Process` metrics to Open Telemetry Builder extension.
+- Added `AspNetCore` and `Runtime` metrics to Open Telemetry Builder extension.
 
 ## [0.0.2]
 ### Added

@@ -37,7 +37,6 @@ public static class OpenTelemetryBuilderExtensions
         {
             tracing
                 .AddAspNetCoreInstrumentation()
-                .AddGrpcClientInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddSource("Azure.*")
                 .AddSource(activitySourceNames);
@@ -50,7 +49,6 @@ public static class OpenTelemetryBuilderExtensions
             metrics
                 .AddHttpClientInstrumentation()
                 .AddAspNetCoreInstrumentation()
-                .AddProcessInstrumentation()
                 .AddRuntimeInstrumentation()
                 .AddMeter(meterNames);
             
