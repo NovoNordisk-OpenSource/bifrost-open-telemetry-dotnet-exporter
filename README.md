@@ -10,8 +10,8 @@ Bifrost can be instrumented in two ways. Either by using the Builder Extensions 
 Using the Open Telemetry Builder extension is the simplest solution but also the least flexible. It is recommended to use the Exporter Extensions if you need more control over the configuration.
 
 By using the telemetry builder you'll get
-- `AspNetCore`, `HttpClient` and `"Azure.*"` traces auto instrumentation.
-- `HttpClient` metrics auto instrumentation.
+- `AspNetCore`, `HttpClient`, `GrpcClient` and `"Azure.*"` traces auto instrumentation.
+- `HttpClient`, `AspNetCore`, `Process` and `Runtime` metrics auto instrumentation.
 - `IncludeScopes` and `IncludeFormattedMessage` logs. 
 
 You can also add your own activity sources and meters.
