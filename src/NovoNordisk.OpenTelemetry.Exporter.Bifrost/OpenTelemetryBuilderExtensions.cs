@@ -35,8 +35,15 @@ public static class OpenTelemetryBuilderExtensions
     {
         builder.WithTracing(tracing =>
         {
+            if (builder.Environment.IsDevelopment())
+            {
+                // We want to view all traces in development
+                tracing.SetSampler(new AlwaysOnSampler());
+            }
+
             tracing
                 .AddAspNetCoreInstrumentation()
+                .AddGrpcClientInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddSource("Azure.*")
                 .AddSource(activitySourceNames);
@@ -48,6 +55,9 @@ public static class OpenTelemetryBuilderExtensions
         {
             metrics
                 .AddHttpClientInstrumentation()
+                .AddAspNetCoreInstrumentation()
+                .AddProcessInstrumentation()
+                .AddRuntimeInstrumentation()
                 .AddMeter(meterNames);
             
             metrics.AddBifrostExporter(bifrostOptions);
