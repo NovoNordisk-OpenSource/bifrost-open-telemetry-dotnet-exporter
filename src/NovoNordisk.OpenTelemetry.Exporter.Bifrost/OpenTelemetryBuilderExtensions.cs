@@ -35,12 +35,6 @@ public static class OpenTelemetryBuilderExtensions
     {
         builder.WithTracing(tracing =>
         {
-            if (builder.Environment.IsDevelopment())
-            {
-                // We want to view all traces in development
-                tracing.SetSampler(new AlwaysOnSampler());
-            }
-
             tracing
                 .AddAspNetCoreInstrumentation()
                 .AddGrpcClientInstrumentation()
