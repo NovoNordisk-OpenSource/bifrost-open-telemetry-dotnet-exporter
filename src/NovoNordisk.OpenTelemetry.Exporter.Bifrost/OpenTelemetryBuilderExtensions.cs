@@ -48,6 +48,8 @@ public static class OpenTelemetryBuilderExtensions
         {
             metrics
                 .AddHttpClientInstrumentation()
+                .AddAspNetCoreInstrumentation()
+                .AddRuntimeInstrumentation()
                 .AddMeter(meterNames);
             
             metrics.AddBifrostExporter(bifrostOptions);

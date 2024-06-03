@@ -11,7 +11,7 @@ Using the Open Telemetry Builder extension is the simplest solution but also the
 
 By using the telemetry builder you'll get
 - `AspNetCore`, `HttpClient` and `"Azure.*"` traces auto instrumentation.
-- `HttpClient` metrics auto instrumentation.
+- `HttpClient`, `AspNetCore` and `Runtime` metrics auto instrumentation.
 - `IncludeScopes` and `IncludeFormattedMessage` logs. 
 
 You can also add your own activity sources and meters.
