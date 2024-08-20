@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-Bump Microsoft.Identity.Web from 2.18.2 to 2.19.0
+- Bump Microsoft.Identity.Web from 2.18.2 to 2.19.0
+- Update readme.md
 
 ## [0.0.3]
 ### Added
