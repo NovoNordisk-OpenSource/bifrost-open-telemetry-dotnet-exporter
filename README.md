@@ -2,6 +2,8 @@
 The content of this library is a set of OpenTelemetry instrumentation extensions for exporting telemetry to Bifrost.
 This library is intended to be used in conjunction with the OpenTelemetry SDK and exporter libraries.
 
+_The library handles OAuth Authentication, Exporting to Bifrost and instrumentation of the most commonly used .net and Azure OTel libraries._
+
 It is based on https://github.com/NovoNordisk-OpenSource/heimdall-templates-dotnet-microservice/blob/main/src/Heimdall.Templates.Dotnet.Microservice.Infrastructure/OpenTelemetry
 
 # Examples
@@ -11,7 +13,7 @@ Using the Open Telemetry Builder extension is the simplest solution but also the
 
 By using the telemetry builder you'll get
 - `AspNetCore`, `HttpClient` and `"Azure.*"` traces auto instrumentation.
-- `HttpClient`, `AspNetCore` and `Runtime` metrics auto instrumentation.
+- `AspNetCore`, `HttpClient` and `Runtime` metrics auto instrumentation.
 - `IncludeScopes` and `IncludeFormattedMessage` logs. 
 
 You can also add your own activity sources and meters.
