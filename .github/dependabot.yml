@@ -10,6 +10,6 @@ updates:
     schedule:
       interval: "weekly"
     assignees:
-      - "simon-k"
+      - "NovoNordisk-OpenSource/bifrost-exporter-admins"
     reviewers:
-      - "simon-k"
+      - "NovoNordisk-OpenSource/bifrost-exporter-admins"
