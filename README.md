@@ -1,4 +1,7 @@
 # Novo Nordisk C# Bifrost Exporter
+
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/NovoNordisk-OpenSource/bifrost-open-telemetry-dotnet-exporter/badge)](https://scorecard.dev/viewer/?uri=github.com/NovoNordisk-OpenSource/bifrost-open-telemetry-dotnet-exporter)
+
 The content of this library is a set of OpenTelemetry instrumentation extensions for exporting telemetry to Bifrost.
 This library is intended to be used in conjunction with the OpenTelemetry SDK and exporter libraries.
 
