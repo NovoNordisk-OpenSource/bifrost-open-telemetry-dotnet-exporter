@@ -53,13 +53,10 @@ Hint: You can also add attributes, like environment, to the resource.
 
 
 ## Open Telemetry Exporters
-By using the Open Telemetry Exportr extensions you have more control over the configuration. Fx what auto instrumentation should be used.
-
-```csharp 
-## Log Exporter
+By using the Open Telemetry Exporter extensions you have more control over the configuration. Fx what auto instrumentation should be used.
 Here is an example with a dummy configuration that will export open telemetry logs to Bifrost using a service principal.
 
-```csharp
+```csharp 
 builder.Logging.AddOpenTelemetry(options =>
 {
     options.AddBifrostExporter(
@@ -117,7 +114,7 @@ The nuget package follows [semver.org](https://www.semver.org).
 
 ## Release Procedure
 These are the steps needed to create a new release:
-1. Make sure the `CHANGELOG.md`is up to date in tha main branch.
+1. Make sure the `CHANGELOG.md`is up to date in the main branch.
 2. In GitHub, create a new release.
     1. The tag version should be the same as the version in the `CHANGELOG.md` file, prefixed with a 'v'. For example `v1.2.3`.
     2. The release title should be the version number. Fx `1.2.3`. The release title is used as the version number in the nuget package.
