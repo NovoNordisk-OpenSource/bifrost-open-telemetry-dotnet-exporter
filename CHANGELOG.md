@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Bumps Microsoft.Identity.Web from 3.0.1 to 3.1.0
+- Bumps Microsoft.Identity.Web from 3.2.0 to 3.2.2
 
 ## [1.0.0]
 No changes. Just a bump of 0.0.4 to 1.0.0.
