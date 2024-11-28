@@ -16,8 +16,8 @@
         <PackageTags>utility</PackageTags>
 		<PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
 		<Copyright>Novo Nordisk A/S</Copyright>
-        <TargetFrameworks>net8.0</TargetFrameworks>
-        <LangVersion>12</LangVersion>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <LangVersion>13</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
