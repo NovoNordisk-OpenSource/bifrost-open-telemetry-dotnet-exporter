@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4]
+### Changed
+- Bump OpenTelemetry.Instrumentation.Runtime from 1.14.0 to 1.15.1
+- Bump OpenTelemetry.Instrumentation.Http from 1.14.0 to 1.15.1
+- Bump OpenTelemetry.Instrumentation.AspNetCore from 1.14.0 to 1.15.2
+- Bump OpenTelemetry.Exporter.OpenTelemetryProtocol from 1.14.0 to 1.15.3
+- Bump Microsoft.Identity.Web from 4.1.0 to 4.8.0
+
 ## [1.1.3]
 ### Changed
 - Bump OpenTelemetry.Instrumentation.Runtime from 1.11.0 to 1.14.0 
