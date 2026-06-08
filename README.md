@@ -104,6 +104,42 @@ builder.Services.AddOpenTelemetry()
     };
 ```
 
+## Authentication modes
+By default the exporter authenticates as an Entra ID confidential client (service principal) using `ClientId`, `ClientSecret`, and `TenantId` from `IdentityOptions`. Set `BifrostOptions.AuthorizationMode` to switch to a managed-identity flow — useful when running on Azure Container Apps, App Service, AKS, or VMs with an assigned identity, since no client secret is needed.
+
+### User-assigned managed identity
+Set `AuthorizationMode = BifrostAuthorizationMode.UserAssignedIdentity` and put the identity's client id on `IdentityOptions.UserAssignedManagedIdentityClientId`:
+
+```csharp
+var bifrostOptions = new BifrostOptions
+{
+    Endpoint = "https://your.bifrost.endpoint/otlp/http/v1",
+    BifrostEnvironmentId = "d9a8719a-8bc2-4829-a078-231df13fd125",
+    AuthorizationMode = BifrostAuthorizationMode.UserAssignedIdentity,
+    IdentityOptions = new MicrosoftIdentityOptions
+    {
+        UserAssignedManagedIdentityClientId = "00000000-0000-0000-0000-000000000000"
+    }
+};
+
+builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
+```
+
+### System-assigned managed identity
+Set `AuthorizationMode = BifrostAuthorizationMode.SystemAssignedIdentity`. No fields on `IdentityOptions` are read:
+
+```csharp
+var bifrostOptions = new BifrostOptions
+{
+    Endpoint = "https://your.bifrost.endpoint/otlp/http/v1",
+    BifrostEnvironmentId = "d9a8719a-8bc2-4829-a078-231df13fd125",
+    AuthorizationMode = BifrostAuthorizationMode.SystemAssignedIdentity,
+    IdentityOptions = new MicrosoftIdentityOptions()
+};
+
+builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
+```
+
 # How to Contribute
 ## Branching Strategy
 Trunk based branching strategy is used. New features are added by creating feature branches that are merged to main with a pull request.
