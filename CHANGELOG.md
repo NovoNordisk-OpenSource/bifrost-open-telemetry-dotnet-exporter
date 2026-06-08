@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## [1.2.0]
 ### Added
 - `BifrostAuthorizationMode` enum (`NoAuth`, `ServicePrincipal`, `SystemAssignedIdentity`, `UserAssignedIdentity`) to select the credential flow used by the exporter.
 - `BifrostOptions.AuthorizationMode` property, defaulting to `ServicePrincipal` for backward compatibility.
 - Optional `authorizationMode` parameter on the `AddBifrostExporter` overloads that take a `MicrosoftIdentityOptions` directly.
+- `BifrostAuthorizationMode.FederatedManagedIdentity` — authenticate as an app registration whose credential is a federated assertion signed by a user-assigned managed identity. Use this when the receiving system (e.g. Bifrost / Grafana) authorizes by the app registration's client id and you want to retire client-secret storage. Requires `IdentityOptions.ClientId`, `IdentityOptions.TenantId`, and `IdentityOptions.UserAssignedManagedIdentityClientId`. The app registration must have a federated credential trusting the UAMI with audience `api://AzureADTokenExchange`.
 - README example for user-assigned managed identity.
 
 For `UserAssignedIdentity`, set `IdentityOptions.UserAssignedManagedIdentityClientId` to the client id of the assigned identity. For `SystemAssignedIdentity` and `NoAuth`, no fields on `IdentityOptions` are read.

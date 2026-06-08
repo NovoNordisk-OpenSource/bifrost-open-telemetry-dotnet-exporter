@@ -140,6 +140,28 @@ var bifrostOptions = new BifrostOptions
 builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
 ```
 
+### Federated managed identity (recommended for ACA when the receiving system authorizes by app registration)
+Set `AuthorizationMode = BifrostAuthorizationMode.FederatedManagedIdentity` to authenticate as an Entra ID app registration whose credential is a federated assertion signed by a user-assigned managed identity attached to the host. The bearer token issued is for the app registration (not the UAMI), so receiving systems like Bifrost / Grafana that authorize by `appid` recognize the call — and no client secret has to live in Key Vault.
+
+```csharp
+var bifrostOptions = new BifrostOptions
+{
+    Endpoint = "https://your.bifrost.endpoint/otlp/http/v1",
+    BifrostEnvironmentId = "d9a8719a-8bc2-4829-a078-231df13fd125",
+    AuthorizationMode = BifrostAuthorizationMode.FederatedManagedIdentity,
+    IdentityOptions = new MicrosoftIdentityOptions
+    {
+        TenantId = "<tenant-id>",
+        ClientId = "<app-registration-client-id-registered-in-bifrost>",
+        UserAssignedManagedIdentityClientId = "<uami-client-id-attached-to-the-host>"
+    }
+};
+
+builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
+```
+
+This requires a federated credential configured on the app registration that trusts the UAMI with audience `api://AzureADTokenExchange`. At runtime the UAMI mints a self-signed JWT with that audience, the exporter passes it as a client assertion to the token endpoint for the app registration, and Entra returns a bearer token whose `appid` claim matches what Bifrost has registered.
+
 # How to Contribute
 ## Branching Strategy
 Trunk based branching strategy is used. New features are added by creating feature branches that are merged to main with a pull request.

@@ -31,5 +31,21 @@ public enum BifrostAuthorizationMode
     /// from <c>UserAssignedManagedIdentityClientId</c> on the supplied
     /// <see cref="Microsoft.Identity.Web.MicrosoftIdentityOptions"/>.
     /// </summary>
-    UserAssignedIdentity
+    UserAssignedIdentity,
+
+    /// <summary>
+    /// Authenticate as an Entra ID confidential client whose credential is a federated assertion
+    /// produced by a user-assigned managed identity attached to the host (e.g. an Azure Container App).
+    /// The bearer token issued is for the app registration (not the UAMI) — the UAMI's only role is
+    /// to sign the assertion. Use this when the receiving system (e.g. Bifrost / Grafana) authorizes
+    /// based on the registered app and you want to retire client-secret storage.
+    /// </summary>
+    /// <remarks>
+    /// Requires (1) <c>ClientId</c> and <c>TenantId</c> on the supplied
+    /// <see cref="Microsoft.Identity.Web.MicrosoftIdentityOptions"/> identifying the app registration,
+    /// and (2) <c>UserAssignedManagedIdentityClientId</c> identifying the UAMI that signs the
+    /// assertion. The app registration must have a federated credential trusting that UAMI with
+    /// audience <c>api://AzureADTokenExchange</c>.
+    /// </remarks>
+    FederatedManagedIdentity
 }

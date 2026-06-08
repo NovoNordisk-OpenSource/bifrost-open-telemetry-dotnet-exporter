@@ -131,9 +131,51 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 break;
 
+            case BifrostAuthorizationMode.FederatedManagedIdentity:
+                if (identityOptions.ClientId == null
+                    || identityOptions.TenantId == null
+                    || identityOptions.UserAssignedManagedIdentityClientId == null)
+                {
+                    throw new ArgumentNullException(
+                        $"Identity options ClientId='{identityOptions.ClientId}', " +
+                        $"TenantId='{identityOptions.TenantId}', " +
+                        $"or UserAssignedManagedIdentityClientId='{identityOptions.UserAssignedManagedIdentityClientId}' " +
+                        $"is null."
+                    );
+                }
+
+                // The UAMI signs the assertion. Audience is the constant token-exchange audience that Entra accepts for federated credentials.
+                var assertionApp = ManagedIdentityApplicationBuilder
+                    .Create(ManagedIdentityId.WithUserAssignedResourceId(identityOptions.UserAssignedManagedIdentityClientId))
+                    // Azure Container Apps does not work without this
+                    .WithExperimentalFeatures()
+                    .Build();
+
+                confidentialClientApplication = ConfidentialClientApplicationBuilder
+                    .Create(identityOptions.ClientId)
+                    .WithAuthority($"https://login.microsoftonline.com/{identityOptions.TenantId}")
+                    .WithClientAssertion(async (AssertionRequestOptions _) =>
+                    {
+                        var assertion = await assertionApp
+                            .AcquireTokenForManagedIdentity("api://AzureADTokenExchange")
+                            .ExecuteAsync()
+                            .ConfigureAwait(false);
+
+                        return assertion.AccessToken;
+                    })
+                    .WithExperimentalFeatures()
+                    .Build();
+
+                authenticationResult = await confidentialClientApplication
+                    .AcquireTokenForClient([$"{scope}/.default"])
+                    .ExecuteAsync()
+                    .ConfigureAwait(false);
+
+                break;
+
             case BifrostAuthorizationMode.NoAuth:
                 authenticationResult = null;
-                
+
                 break;
 
             default:
