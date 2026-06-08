@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 For `UserAssignedIdentity`, set `IdentityOptions.UserAssignedManagedIdentityClientId` to the client id of the assigned identity. For `SystemAssignedIdentity` and `NoAuth`, no fields on `IdentityOptions` are read.
 
+- Bump Bump Microsoft.Identity.Web from 4.9.0 to 4.10.0
+
 ## [1.1.5]
 ### Changed
 - Bump Bump Microsoft.Identity.Web from 4.8.0 to 4.9.0
