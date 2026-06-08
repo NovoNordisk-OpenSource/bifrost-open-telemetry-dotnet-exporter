@@ -119,7 +119,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
                     );
 
                 managedIdApplication = ManagedIdentityApplicationBuilder
-                    .Create(ManagedIdentityId.WithUserAssignedResourceId(identityOptions.UserAssignedManagedIdentityClientId))
+                    .Create(ManagedIdentityId.WithUserAssignedClientId(identityOptions.UserAssignedManagedIdentityClientId))
                     // Azure Container Apps does not work without this
                     .WithExperimentalFeatures()
                     .Build();
@@ -146,7 +146,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 // The UAMI signs the assertion. Audience is the constant token-exchange audience that Entra accepts for federated credentials.
                 var assertionApp = ManagedIdentityApplicationBuilder
-                    .Create(ManagedIdentityId.WithUserAssignedResourceId(identityOptions.UserAssignedManagedIdentityClientId))
+                    .Create(ManagedIdentityId.WithUserAssignedClientId(identityOptions.UserAssignedManagedIdentityClientId))
                     // Azure Container Apps does not work without this
                     .WithExperimentalFeatures()
                     .Build();
