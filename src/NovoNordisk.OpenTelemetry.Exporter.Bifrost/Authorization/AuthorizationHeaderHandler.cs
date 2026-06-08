@@ -8,7 +8,7 @@ namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost.Authorization;
 /// <summary>
 /// Represents a message handler that adds an authorization header to outgoing HTTP requests for telemetry purposes.
 /// </summary>
-internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, MicrosoftIdentityOptions identityOptions, OpenTelemetryExporterOptions otlpExporterOptions, AuthorizationOptions options = AuthorizationOptions.ServicePrincipal) : DelegatingHandler(innerHandler)
+internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, MicrosoftIdentityOptions identityOptions, OpenTelemetryExporterOptions otlpExporterOptions, BifrostAuthorizationMode options = BifrostAuthorizationMode.ServicePrincipal) : DelegatingHandler(innerHandler)
 {
     private static readonly TimeSpan MinimumValidityPeriod = TimeSpan.FromMinutes(2);
 
@@ -70,7 +70,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
         return authenticationResult?.AccessToken;
     }
 
-    private static async Task<AuthenticationResult?> GetAuthenticationResultAsync(MicrosoftIdentityOptions identityOptions, AuthorizationOptions options, string scope)
+    private static async Task<AuthenticationResult?> GetAuthenticationResultAsync(MicrosoftIdentityOptions identityOptions, BifrostAuthorizationMode options, string scope)
     {
         IConfidentialClientApplication confidentialClientApplication;
         IManagedIdentityApplication managedIdApplication;
@@ -78,7 +78,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
         switch (options)
         {
-            case AuthorizationOptions.ServicePrincipal:
+            case BifrostAuthorizationMode.ServicePrincipal:
                 if (identityOptions.ClientId == null || identityOptions.ClientSecret == null || identityOptions.TenantId == null)
                     throw new ArgumentNullException(
                         $"Identity options {identityOptions.ClientId}, {identityOptions.ClientSecret}, or {identityOptions.TenantId} is null."
@@ -98,7 +98,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 break;
 
-            case AuthorizationOptions.SystemAssignedIdentity:
+            case BifrostAuthorizationMode.SystemAssignedIdentity:
                 managedIdApplication = ManagedIdentityApplicationBuilder
                     .Create(ManagedIdentityId.SystemAssigned)
                     // Azure Container Apps does not work without this
@@ -112,7 +112,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 break;
 
-            case AuthorizationOptions.UserAssignedIdentity:
+            case BifrostAuthorizationMode.UserAssignedIdentity:
                 if (identityOptions.UserAssignedManagedIdentityClientId == null)
                     throw new ArgumentNullException(
                         $"Identity option {identityOptions.UserAssignedManagedIdentityClientId} is null."
@@ -131,7 +131,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 break;
 
-            case AuthorizationOptions.NoAuth:
+            case BifrostAuthorizationMode.NoAuth:
                 authenticationResult = null;
                 
                 break;

@@ -1,0 +1,35 @@
+namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
+
+/// <summary>
+/// Selects the credential flow used by the Bifrost exporter to acquire bearer tokens.
+/// </summary>
+public enum BifrostAuthorizationMode
+{
+    /// <summary>
+    /// No authorization header is attached. Intended for scenarios where the exporter is
+    /// behind another component that handles authentication, or for local development against
+    /// an unauthenticated collector.
+    /// </summary>
+    NoAuth,
+
+    /// <summary>
+    /// Authenticate as an Entra ID confidential client using <c>ClientId</c>,
+    /// <c>ClientSecret</c>, and <see cref="Microsoft.Identity.Web.MicrosoftIdentityOptions.TenantId"/>
+    /// from the supplied <see cref="Microsoft.Identity.Web.MicrosoftIdentityOptions"/>. This is
+    /// the historical default and is preserved for backward compatibility.
+    /// </summary>
+    ServicePrincipal,
+
+    /// <summary>
+    /// Authenticate using the host's system-assigned managed identity. No credential fields are
+    /// read from <see cref="Microsoft.Identity.Web.MicrosoftIdentityOptions"/>.
+    /// </summary>
+    SystemAssignedIdentity,
+
+    /// <summary>
+    /// Authenticate using a user-assigned managed identity. The identity's client id is read
+    /// from <c>UserAssignedManagedIdentityClientId</c> on the supplied
+    /// <see cref="Microsoft.Identity.Web.MicrosoftIdentityOptions"/>.
+    /// </summary>
+    UserAssignedIdentity
+}
