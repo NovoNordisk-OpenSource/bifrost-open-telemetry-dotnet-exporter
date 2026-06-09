@@ -1,12 +1,12 @@
+namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using NovoNordisk.OpenTelemetry.Exporter.Bifrost.Authorization;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
-
-namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
+using global::OpenTelemetry.Exporter;
+using global::OpenTelemetry.Logs;
+using global::OpenTelemetry.Metrics;
+using global::OpenTelemetry.Trace;
 
 /// <summary>
 /// Extensions for instrumenting Bifrost exporters in Open Telemetry.

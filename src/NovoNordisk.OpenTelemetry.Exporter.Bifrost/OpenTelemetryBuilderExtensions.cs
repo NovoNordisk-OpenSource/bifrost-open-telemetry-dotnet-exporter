@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using OpenTelemetry;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
+﻿namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
 
-namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using global::OpenTelemetry;
+using global::OpenTelemetry.Metrics;
+using global::OpenTelemetry.Trace;
 
 /// <summary>
 /// Extensions for instrumenting Bifrost in Open Telemetry.
