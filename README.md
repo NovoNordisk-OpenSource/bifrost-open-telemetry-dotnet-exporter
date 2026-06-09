@@ -104,6 +104,64 @@ builder.Services.AddOpenTelemetry()
     };
 ```
 
+## Authentication modes
+By default the exporter authenticates as an Entra ID confidential client (service principal) using `ClientId`, `ClientSecret`, and `TenantId` from `IdentityOptions`. Set `BifrostOptions.AuthorizationMode` to switch to a managed-identity flow — useful when running on Azure Container Apps, App Service, AKS, or VMs with an assigned identity, since no client secret is needed.
+
+### User-assigned managed identity
+Set `AuthorizationMode = BifrostAuthorizationMode.UserAssignedIdentity` and put the identity's client id on `IdentityOptions.UserAssignedManagedIdentityClientId`:
+
+```csharp
+var bifrostOptions = new BifrostOptions
+{
+    Endpoint = "https://your.bifrost.endpoint/otlp/http/v1",
+    BifrostEnvironmentId = "d9a8719a-8bc2-4829-a078-231df13fd125",
+    AuthorizationMode = BifrostAuthorizationMode.UserAssignedIdentity,
+    IdentityOptions = new MicrosoftIdentityOptions
+    {
+        UserAssignedManagedIdentityClientId = "00000000-0000-0000-0000-000000000000"
+    }
+};
+
+builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
+```
+
+### System-assigned managed identity
+Set `AuthorizationMode = BifrostAuthorizationMode.SystemAssignedIdentity`. No fields on `IdentityOptions` are read:
+
+```csharp
+var bifrostOptions = new BifrostOptions
+{
+    Endpoint = "https://your.bifrost.endpoint/otlp/http/v1",
+    BifrostEnvironmentId = "d9a8719a-8bc2-4829-a078-231df13fd125",
+    AuthorizationMode = BifrostAuthorizationMode.SystemAssignedIdentity,
+    IdentityOptions = new MicrosoftIdentityOptions()
+};
+
+builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
+```
+
+### Federated managed identity (recommended for ACA when the receiving system authorizes by app registration)
+Set `AuthorizationMode = BifrostAuthorizationMode.FederatedManagedIdentity` to authenticate as an Entra ID app registration whose credential is a federated assertion signed by a user-assigned managed identity attached to the host. The bearer token issued is for the app registration (not the UAMI), so receiving systems like Bifrost / Grafana that authorize by `appid` recognize the call — and no client secret has to live in Key Vault.
+
+```csharp
+var bifrostOptions = new BifrostOptions
+{
+    Endpoint = "https://your.bifrost.endpoint/otlp/http/v1",
+    BifrostEnvironmentId = "d9a8719a-8bc2-4829-a078-231df13fd125",
+    AuthorizationMode = BifrostAuthorizationMode.FederatedManagedIdentity,
+    IdentityOptions = new MicrosoftIdentityOptions
+    {
+        TenantId = "<tenant-id>",
+        ClientId = "<app-registration-client-id-registered-in-bifrost>",
+        UserAssignedManagedIdentityClientId = "<uami-client-id-attached-to-the-host>"
+    }
+};
+
+builder.Services.AddOpenTelemetry().UseBifrost(bifrostOptions);
+```
+
+This requires a federated credential configured on the app registration that trusts the UAMI with audience `api://AzureADTokenExchange`. At runtime the UAMI mints a self-signed JWT with that audience, the exporter passes it as a client assertion to the token endpoint for the app registration, and Entra returns a bearer token whose `appid` claim matches what Bifrost has registered.
+
 # How to Contribute
 ## Branching Strategy
 Trunk based branching strategy is used. New features are added by creating feature branches that are merged to main with a pull request.
@@ -123,6 +181,9 @@ These are the steps needed to create a new release:
 To build and publish the nuget package manually, do the following:
 1. Build and test the solution `dotnet build` and `dotnet test`
 2. Package the nuget package with the right version: `dotnet pack NovoNordisk.OpenTelemetry.Exporter.Bifrost -c Release /p:PackageVersion=[SEMVER. Fx 1.2.3]`
+
+## Local development packages
+For consuming unreleased changes from a local feed, run [`scripts/pack-local.ps1`](scripts/pack-local.ps1). It produces a timestamped pre-release `.nupkg` (e.g. `1.1.6-dev.20260609-1430`) under `artifacts/packages` and prints the matching `<PackageVersion>` line to drop into a consumer's `Directory.Packages.props`. The unique suffix sidesteps NuGet's id+version cache, so re-packing without bumping the version still surfaces the latest bits. See the script's comment header for parameters (`-OutputPath`, `-VersionPrefix`, `-VersionSuffix`, `-Configuration`, `-NoBuild`).
 
 # TODO
 - We could probably use BifrostOptions in the private methods of BifrostExporter and make the arguments simpler.

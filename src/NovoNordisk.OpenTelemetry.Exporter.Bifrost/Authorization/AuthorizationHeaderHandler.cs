@@ -1,14 +1,14 @@
-﻿using System.Net.Http.Headers;
+﻿namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost.Authorization;
+
+using System.Net.Http.Headers;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.AppConfig;
 using Microsoft.Identity.Web;
 
-namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost.Authorization;
-
 /// <summary>
 /// Represents a message handler that adds an authorization header to outgoing HTTP requests for telemetry purposes.
 /// </summary>
-internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, MicrosoftIdentityOptions identityOptions, OpenTelemetryExporterOptions otlpExporterOptions, AuthorizationOptions options = AuthorizationOptions.ServicePrincipal) : DelegatingHandler(innerHandler)
+internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, MicrosoftIdentityOptions identityOptions, OpenTelemetryExporterOptions otlpExporterOptions, BifrostAuthorizationMode options = BifrostAuthorizationMode.ServicePrincipal) : DelegatingHandler(innerHandler)
 {
     private static readonly TimeSpan MinimumValidityPeriod = TimeSpan.FromMinutes(2);
 
@@ -47,9 +47,13 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
         bool tokenExpiredOrAboutToExpire;
 
         if (authenticationResult != null)
+        {
             tokenExpiredOrAboutToExpire = authenticationResult?.ExpiresOn < DateTimeOffset.UtcNow + MinimumValidityPeriod;
+        }
         else
+        {
             tokenExpiredOrAboutToExpire = true;
+        }
 
         if (tokenExpiredOrAboutToExpire)
         {
@@ -70,7 +74,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
         return authenticationResult?.AccessToken;
     }
 
-    private static async Task<AuthenticationResult?> GetAuthenticationResultAsync(MicrosoftIdentityOptions identityOptions, AuthorizationOptions options, string scope)
+    private static async Task<AuthenticationResult?> GetAuthenticationResultAsync(MicrosoftIdentityOptions identityOptions, BifrostAuthorizationMode options, string scope)
     {
         IConfidentialClientApplication confidentialClientApplication;
         IManagedIdentityApplication managedIdApplication;
@@ -78,11 +82,13 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
         switch (options)
         {
-            case AuthorizationOptions.ServicePrincipal:
+            case BifrostAuthorizationMode.ServicePrincipal:
                 if (identityOptions.ClientId == null || identityOptions.ClientSecret == null || identityOptions.TenantId == null)
+                {
                     throw new ArgumentNullException(
                         $"Identity options {identityOptions.ClientId}, {identityOptions.ClientSecret}, or {identityOptions.TenantId} is null."
                     );
+                }
 
                 confidentialClientApplication = ConfidentialClientApplicationBuilder
                     .Create(identityOptions.ClientId)
@@ -98,7 +104,7 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 break;
 
-            case AuthorizationOptions.SystemAssignedIdentity:
+            case BifrostAuthorizationMode.SystemAssignedIdentity:
                 managedIdApplication = ManagedIdentityApplicationBuilder
                     .Create(ManagedIdentityId.SystemAssigned)
                     // Azure Container Apps does not work without this
@@ -112,14 +118,16 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 break;
 
-            case AuthorizationOptions.UserAssignedIdentity:
+            case BifrostAuthorizationMode.UserAssignedIdentity:
                 if (identityOptions.UserAssignedManagedIdentityClientId == null)
+                {
                     throw new ArgumentNullException(
                         $"Identity option {identityOptions.UserAssignedManagedIdentityClientId} is null."
                     );
+                }
 
                 managedIdApplication = ManagedIdentityApplicationBuilder
-                    .Create(ManagedIdentityId.WithUserAssignedResourceId(identityOptions.UserAssignedManagedIdentityClientId))
+                    .Create(ManagedIdentityId.WithUserAssignedClientId(identityOptions.UserAssignedManagedIdentityClientId))
                     // Azure Container Apps does not work without this
                     .WithExperimentalFeatures()
                     .Build();
@@ -131,9 +139,51 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
                 break;
 
-            case AuthorizationOptions.NoAuth:
+            case BifrostAuthorizationMode.FederatedManagedIdentity:
+                if (identityOptions.ClientId == null
+                    || identityOptions.TenantId == null
+                    || identityOptions.UserAssignedManagedIdentityClientId == null)
+                {
+                    throw new ArgumentNullException(
+                        $"Identity options ClientId='{identityOptions.ClientId}', " +
+                        $"TenantId='{identityOptions.TenantId}', " +
+                        $"or UserAssignedManagedIdentityClientId='{identityOptions.UserAssignedManagedIdentityClientId}' " +
+                        $"is null."
+                    );
+                }
+
+                // The UAMI signs the assertion. Audience is the constant token-exchange audience that Entra accepts for federated credentials.
+                var assertionApp = ManagedIdentityApplicationBuilder
+                    .Create(ManagedIdentityId.WithUserAssignedClientId(identityOptions.UserAssignedManagedIdentityClientId))
+                    // Azure Container Apps does not work without this
+                    .WithExperimentalFeatures()
+                    .Build();
+
+                confidentialClientApplication = ConfidentialClientApplicationBuilder
+                    .Create(identityOptions.ClientId)
+                    .WithAuthority($"https://login.microsoftonline.com/{identityOptions.TenantId}")
+                    .WithClientAssertion(async (AssertionRequestOptions _) =>
+                    {
+                        var assertion = await assertionApp
+                            .AcquireTokenForManagedIdentity("api://AzureADTokenExchange")
+                            .ExecuteAsync()
+                            .ConfigureAwait(false);
+
+                        return assertion.AccessToken;
+                    })
+                    .WithExperimentalFeatures()
+                    .Build();
+
+                authenticationResult = await confidentialClientApplication
+                    .AcquireTokenForClient([$"{scope}/.default"])
+                    .ExecuteAsync()
+                    .ConfigureAwait(false);
+
+                break;
+
+            case BifrostAuthorizationMode.NoAuth:
                 authenticationResult = null;
-                
+
                 break;
 
             default:
