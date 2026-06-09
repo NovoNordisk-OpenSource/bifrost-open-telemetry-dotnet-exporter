@@ -1,6 +1,6 @@
-using Microsoft.Identity.Web;
-
 namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost;
+
+using Microsoft.Identity.Web;
 
 /// <summary>
 /// Options required for Bifrost exporters.

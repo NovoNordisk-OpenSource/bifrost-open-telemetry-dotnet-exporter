@@ -1,9 +1,9 @@
-﻿using System.Net.Http.Headers;
+﻿namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost.Authorization;
+
+using System.Net.Http.Headers;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.AppConfig;
 using Microsoft.Identity.Web;
-
-namespace NovoNordisk.OpenTelemetry.Exporter.Bifrost.Authorization;
 
 /// <summary>
 /// Represents a message handler that adds an authorization header to outgoing HTTP requests for telemetry purposes.
@@ -47,9 +47,13 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
         bool tokenExpiredOrAboutToExpire;
 
         if (authenticationResult != null)
+        {
             tokenExpiredOrAboutToExpire = authenticationResult?.ExpiresOn < DateTimeOffset.UtcNow + MinimumValidityPeriod;
+        }
         else
+        {
             tokenExpiredOrAboutToExpire = true;
+        }
 
         if (tokenExpiredOrAboutToExpire)
         {
@@ -80,9 +84,11 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
         {
             case BifrostAuthorizationMode.ServicePrincipal:
                 if (identityOptions.ClientId == null || identityOptions.ClientSecret == null || identityOptions.TenantId == null)
+                {
                     throw new ArgumentNullException(
                         $"Identity options {identityOptions.ClientId}, {identityOptions.ClientSecret}, or {identityOptions.TenantId} is null."
                     );
+                }
 
                 confidentialClientApplication = ConfidentialClientApplicationBuilder
                     .Create(identityOptions.ClientId)
@@ -114,9 +120,11 @@ internal class AuthorizationHeaderHandler(HttpMessageHandler innerHandler, Micro
 
             case BifrostAuthorizationMode.UserAssignedIdentity:
                 if (identityOptions.UserAssignedManagedIdentityClientId == null)
+                {
                     throw new ArgumentNullException(
                         $"Identity option {identityOptions.UserAssignedManagedIdentityClientId} is null."
                     );
+                }
 
                 managedIdApplication = ManagedIdentityApplicationBuilder
                     .Create(ManagedIdentityId.WithUserAssignedClientId(identityOptions.UserAssignedManagedIdentityClientId))
