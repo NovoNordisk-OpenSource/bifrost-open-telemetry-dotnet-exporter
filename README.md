@@ -182,6 +182,9 @@ To build and publish the nuget package manually, do the following:
 1. Build and test the solution `dotnet build` and `dotnet test`
 2. Package the nuget package with the right version: `dotnet pack NovoNordisk.OpenTelemetry.Exporter.Bifrost -c Release /p:PackageVersion=[SEMVER. Fx 1.2.3]`
 
+## Local development packages
+For consuming unreleased changes from a local feed, run [`scripts/pack-local.ps1`](scripts/pack-local.ps1). It produces a timestamped pre-release `.nupkg` (e.g. `1.1.6-dev.20260609-1430`) under `artifacts/packages` and prints the matching `<PackageVersion>` line to drop into a consumer's `Directory.Packages.props`. The unique suffix sidesteps NuGet's id+version cache, so re-packing without bumping the version still surfaces the latest bits. See the script's comment header for parameters (`-OutputPath`, `-VersionPrefix`, `-VersionSuffix`, `-Configuration`, `-NoBuild`).
+
 # TODO
 - We could probably use BifrostOptions in the private methods of BifrostExporter and make the arguments simpler.
 - Maybe we could use the config or environment variables in the `OpenTelemetryBuilderExtensions` so the user does not 
