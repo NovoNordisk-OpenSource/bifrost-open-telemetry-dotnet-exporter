@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump OpenTelemetry.Exporter.OpenTelemetryProtocol from 1.15.3 to 1.16.0
 - Bump OpenTelemetry.Instrumentation.Http from 1.15.1 to 1.16.0
 - Bump OpenTelemetry.Instrumentation.AspNetCore from 1.15.2 to 1.16.0
-- OpenTelemetry.Instrumentation.Runtime from 1.15.1 to 1.16.0
+- Bump OpenTelemetry.Instrumentation.Runtime from 1.15.1 to 1.16.0
 
 ## [1.2.0]
 ### Added
