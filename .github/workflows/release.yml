@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write  # enable GitHub OIDC token issuance for this job. Used to publish nuget packages
 
 jobs:
   release:
@@ -32,5 +33,12 @@ jobs:
     - name: Package 
       run: dotnet pack src/NovoNordisk.OpenTelemetry.Exporter.Bifrost -c Release /p:ContinuousIntegrationBuild=true /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:PackageVersion=${{github.event.release.name}} -o $GITHUB_WORKSPACE/release
 
+      # Get a short-lived NuGet API key
+    - name: NuGet login (OIDC)
+      uses: NuGet/login@ebc737b6fc418a6ca0073cf116ec8dc156d8b81e # v1
+      id: login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
     - name: Publish
-      run: dotnet nuget push $GITHUB_WORKSPACE/release/NovoNordisk.OpenTelemetry.Exporter.Bifrost.${{github.event.release.name}}.nupkg -k ${{ secrets.NUGET_ORG_API_KEY }} --skip-duplicate -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push $GITHUB_WORKSPACE/release/NovoNordisk.OpenTelemetry.Exporter.Bifrost.${{github.event.release.name}}.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --skip-duplicate -s https://api.nuget.org/v3/index.json
